@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 't75*8v$=8@!z@%jq&s-1p*(zz9(e5r-tt_&^^i))qx=ozr88pf'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1']
 
@@ -128,3 +128,5 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=180),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=0),
 }
+
+CORS_ORIGIN_ALLOW_ALL = True

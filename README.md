@@ -8,3 +8,5 @@ i use jwt token for login and this token has two main tokens access token and re
 in below:
 
 ` http post http://127.0.0.1:8000/api/token/ username=mahdi  password=Ma13761376@ `
+
+chromium-browser --disable-web-security --user-data-dir="/home/mahdi"

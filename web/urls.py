@@ -2,7 +2,7 @@ from django.urls import path
 from rest_framework_simplejwt import views as jwt_views
 
 from mainApp.api.views import RegisterView
-from mainApp.views import HelloView
+from mainApp.api.views import HelloView
 from django.contrib import admin
 
 urlpatterns = [

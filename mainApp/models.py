@@ -12,8 +12,11 @@ class Device(models.Model):
 class Face(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False)
     pic_address = models.CharField(max_length=1024, blank=False)
+    pic_link = models.CharField(max_length=1024, blank=False, default=' ')
 
 
 class KnownFace(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False)
-    pic_address = models.CharField(max_length=1024, blank=False)
+    pic_address = models.CharField(max_length=1024, blank=False, default=' ')
+    first_name = models.CharField(max_length=1024, blank=False, default=' ')
+    last_name = models.CharField(max_length=1024, blank=False, default=' ')

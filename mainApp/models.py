@@ -6,7 +6,7 @@ class Device(models.Model):
     serial = models.CharField(max_length=64, blank=False, primary_key=True)
     accuracy = models.FloatField(blank=False)
     mode = models.BooleanField(blank=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
 
 
 class Face(models.Model):

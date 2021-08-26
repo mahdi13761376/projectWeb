@@ -8,6 +8,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
+from mainApp.models import Device
+
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -15,11 +17,47 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
 
 
-class HelloView(APIView):
+class Initialize(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
         user = request.user
+        try:
+            device = Device.objects.get(user=user)
+        except:
+            device = None
         output = {}
         output['name'] = user.first_name
+        output['username'] = user.username
+        output['last_name'] = user.last_name
+        if device is not None:
+            output['device'] = device.serial
+            output['device_acc'] = device.accuracy
+            output['device_mode'] = device.mode
         return Response(output)
+
+
+class AddDevice(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        user = request.user
+        acc = request.GET['acc']
+        mode = request.GET['mode']
+        id = request.GET['id']
+        print(acc)
+        try:
+            device = Device.objects.get(serial=id)
+        except:
+            device = None
+        if device is None:
+            return Response('سریال وارد شده معتبر نیست.', 401)
+        else:
+            device.accuracy = acc
+            device.mode = mode
+            device.user = user
+            device.save()
+            output = {}
+            output['device_acc'] = device.accuracy
+            output['device_mode'] = device.mode
+            return Response(output)

@@ -61,3 +61,40 @@ class AddDevice(APIView):
             output['device_acc'] = device.accuracy
             output['device_mode'] = device.mode
             return Response(output)
+
+
+class ChangePassword(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        user = request.user
+        password = request.GET['password']
+        if len(password):
+            user.set_password(password)
+            user.save()
+            return Response('رمز عبور شما تغییر کرد.')
+        return Response('مشکلی پیش آمده است.')
+
+
+class ChangeDevice(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        user = request.user
+        acc = request.GET.get('acc', '')
+        mode = request.GET.get('mode', '')
+        print(mode)
+        try:
+            device = Device.objects.get(user=user)
+        except:
+            device = None
+        if device is None:
+            return Response('مشکلی پیش آمده است.')
+        else:
+            if len(acc):
+                device.accuracy = acc
+            if len(mode):
+                device.mode = mode
+
+        device.save()
+        return Response('اطلاعات دستگاه شما به‌روزرسانی شد.')

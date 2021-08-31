@@ -4,6 +4,8 @@ from rest_framework_simplejwt import views as jwt_views
 from mainApp.api.views import RegisterView
 from mainApp.api.views import Initialize
 from mainApp.api.views import AddDevice
+from mainApp.api.views import ChangePassword
+from mainApp.api.views import ChangeDevice
 from django.contrib import admin
 
 urlpatterns = [
@@ -14,5 +16,7 @@ urlpatterns = [
     path('add_device/', AddDevice.as_view(), name='hello'),
     path('admin/', admin.site.urls),
     path('register/', RegisterView.as_view(), name='auth_register'),
+    path('change_pass/', ChangePassword.as_view(), name='change_pass'),
+    path('change_device/', ChangeDevice.as_view(), name='change_device'),
 
 ]

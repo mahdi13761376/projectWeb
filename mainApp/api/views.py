@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from mainApp.models import Device
+from mainApp.models import Face
 
 
 class RegisterView(generics.CreateAPIView):
@@ -83,7 +84,6 @@ class ChangeDevice(APIView):
         user = request.user
         acc = request.GET.get('acc', '')
         mode = request.GET.get('mode', '')
-        print(mode)
         try:
             device = Device.objects.get(user=user)
         except:
@@ -98,3 +98,23 @@ class ChangeDevice(APIView):
 
         device.save()
         return Response('اطلاعات دستگاه شما به‌روزرسانی شد.')
+
+
+class GetFaces(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        user = request.user
+        try:
+            faces = Face.objects.filter(user=user)
+        except:
+            faces = None
+        outputs = []
+        for face in faces:
+            output = {
+                'link': face.pic_link,
+                'date': str(face.datetime).split(' ')[0],
+                'time': (str(face.datetime).split(' ')[1]).split('.')[0]
+            }
+            outputs.append(output)
+        return Response(outputs)

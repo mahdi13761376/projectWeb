@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Face, KnownFace, Device
+import django_jalali.admin as jadmin
 
 # Register your models here.
 admin.site.register(Face)

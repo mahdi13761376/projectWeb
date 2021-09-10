@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django_jalali.db import models as jmodels
 
 
 class Device(models.Model):
@@ -13,6 +14,7 @@ class Face(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False)
     pic_address = models.CharField(max_length=1024, blank=False)
     pic_link = models.CharField(max_length=1024, blank=False, default=' ')
+    datetime = jmodels.jDateTimeField(auto_now=True)
 
 
 class KnownFace(models.Model):

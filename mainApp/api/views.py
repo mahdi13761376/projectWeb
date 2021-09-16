@@ -134,7 +134,7 @@ class GetKnownFaces(APIView):
         for face in faces:
             output = {
                 'link': face.pic_link,
-                'name': face.firstname + ' ' + face.lastname,
+                'name': face.first_name + ' ' + face.last_name,
             }
             outputs.append(output)
         return Response(outputs)

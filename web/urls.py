@@ -7,6 +7,7 @@ from mainApp.api.views import AddDevice
 from mainApp.api.views import ChangePassword
 from mainApp.api.views import ChangeDevice
 from mainApp.api.views import GetFaces
+from mainApp.api.views import GetKnownFaces
 from django.contrib import admin
 
 urlpatterns = [
@@ -20,5 +21,6 @@ urlpatterns = [
     path('change_pass/', ChangePassword.as_view(), name='change_pass'),
     path('change_device/', ChangeDevice.as_view(), name='change_device'),
     path('get_faces/', GetFaces.as_view(), name='get_faces'),
+    path('get_known_faces/', GetKnownFaces.as_view(), name='get_known_faces'),
 
 ]

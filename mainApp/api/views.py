@@ -10,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from mainApp.models import Device
 from mainApp.models import Face
+from mainApp.models import KnownFace
 
 
 class RegisterView(generics.CreateAPIView):
@@ -115,6 +116,25 @@ class GetFaces(APIView):
                 'link': face.pic_link,
                 'date': str(face.datetime).split(' ')[0],
                 'time': (str(face.datetime).split(' ')[1]).split('.')[0]
+            }
+            outputs.append(output)
+        return Response(outputs)
+
+
+class GetKnownFaces(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        user = request.user
+        try:
+            faces = KnownFace.objects.filter(user=user)
+        except:
+            faces = None
+        outputs = []
+        for face in faces:
+            output = {
+                'link': face.pic_link,
+                'name': face.firstname + ' ' + face.lastname,
             }
             outputs.append(output)
         return Response(outputs)

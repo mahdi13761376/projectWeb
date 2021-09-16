@@ -21,4 +21,5 @@ class KnownFace(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False)
     pic_address = models.CharField(max_length=1024, blank=False, default=' ')
     first_name = models.CharField(max_length=1024, blank=False, default=' ')
+    pic_link = models.CharField(max_length=1024, blank=False, default=' ')
     last_name = models.CharField(max_length=1024, blank=False, default=' ')

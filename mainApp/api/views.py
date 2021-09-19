@@ -1,3 +1,5 @@
+import shutil
+
 from django.contrib.auth.models import User
 from rest_framework.permissions import AllowAny
 
@@ -12,6 +14,9 @@ from mainApp.models import Device
 from mainApp.models import Face
 from mainApp.models import KnownFace
 
+import base64
+
+from django.core.files.base import ContentFile
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -138,3 +143,21 @@ class GetKnownFaces(APIView):
             }
             outputs.append(output)
         return Response(outputs)
+
+
+class Test(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        user = request.user
+        print(user)
+        img = request.data.get('name')
+        format, imgstr = img.split(';base64,')
+        ext = format.split('/')[-1]
+
+        data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)  # You can save this as file instance.
+        print(data.file)
+        data.file.seek(0)
+        with open('test.png', 'wb') as f:
+            shutil.copyfileobj(data.file, f, length=131072)
+        return Response('outputs')

@@ -18,6 +18,7 @@ import base64
 
 from django.core.files.base import ContentFile
 
+
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     permission_classes = (AllowAny,)
@@ -145,19 +146,18 @@ class GetKnownFaces(APIView):
         return Response(outputs)
 
 
-class Test(APIView):
+class AddFace(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         user = request.user
-        print(user)
-        img = request.data.get('name')
+        img = request.data.get('img')
+        name = request.data.get('name')
+        family = request.data.get('family')
         format, imgstr = img.split(';base64,')
         ext = format.split('/')[-1]
-
-        data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)  # You can save this as file instance.
-        print(data.file)
-        data.file.seek(0)
+        data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
         with open('test.png', 'wb') as f:
             shutil.copyfileobj(data.file, f, length=131072)
         return Response('outputs')
+# todo save the picture in a good place and save face object to db

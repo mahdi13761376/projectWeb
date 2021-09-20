@@ -130,3 +130,5 @@ SIMPLE_JWT = {
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
+MEDIA_ROOT = '/home/mahdi/Documents/karshenasi/codes/web/web'
+MEDIA_URL = 'media/'

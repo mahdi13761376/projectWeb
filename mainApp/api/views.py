@@ -162,7 +162,7 @@ class AddFace(APIView):
         if not os.path.isdir(my_dir):
             os.makedirs(my_dir)
         img_loc = my_dir + name + '_' + family + '.png'
-        img_link = '127.0.0.1:8000/media/' + img_loc
+        img_link = 'http://127.0.0.1:8000/media/' + img_loc
         with open(img_loc, 'wb') as f:
             shutil.copyfileobj(data.file, f, length=131072)
         known_face = KnownFace(first_name=name, last_name=family, user=user, pic_address=img_loc, pic_link=img_link)

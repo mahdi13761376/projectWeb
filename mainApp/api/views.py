@@ -1,3 +1,4 @@
+import os
 import shutil
 
 from django.contrib.auth.models import User
@@ -157,7 +158,13 @@ class AddFace(APIView):
         format, imgstr = img.split(';base64,')
         ext = format.split('/')[-1]
         data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
-        with open('test.png', 'wb') as f:
+        my_dir = 'pics/' + user.username + '/'
+        if not os.path.isdir(my_dir):
+            os.makedirs(my_dir)
+        img_loc = my_dir + name + '_' + family + '.png'
+        img_link = '127.0.0.1:8000/media/' + img_loc
+        with open(img_loc, 'wb') as f:
             shutil.copyfileobj(data.file, f, length=131072)
-        return Response('outputs')
-# todo save the picture in a good place and save face object to db
+        known_face = KnownFace(first_name=name, last_name=family, user=user, pic_address=img_loc, pic_link=img_link)
+        known_face.save()
+        return Response('عملیات با موفقیت انجام شد.')

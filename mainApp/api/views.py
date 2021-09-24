@@ -14,6 +14,7 @@ from rest_framework.permissions import IsAuthenticated
 from mainApp.models import Device
 from mainApp.models import Face
 from mainApp.models import KnownFace
+from web.pusher import push_notification
 
 import base64
 
@@ -168,3 +169,8 @@ class AddFace(APIView):
         known_face = KnownFace(first_name=name, last_name=family, user=user, pic_address=img_loc, pic_link=img_link)
         known_face.save()
         return Response('عملیات با موفقیت انجام شد.')
+
+
+class Test(APIView):
+    def get(self, request):
+        return Response(push_notification.send_notification('hello'))

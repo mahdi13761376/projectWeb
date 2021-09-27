@@ -117,7 +117,7 @@ class GetFaces(APIView):
     def get(self, request):
         user = request.user
         try:
-            faces = Face.objects.filter(user=user)
+            faces = Face.objects.filter(user=user).order_by()
             device = Device.objects.get(user=user)
         except:
             faces = None
@@ -132,7 +132,7 @@ class GetFaces(APIView):
                 'need_open': face.need_to_check,
                 'open_link': link,
             }
-            if not face.need_to_check:
+            if face.known_face is not None:
                 output['name'] = face.known_face.first_name + ' ' + face.known_face.last_name
             face.need_to_check = False
             face.save()
@@ -219,6 +219,7 @@ class Open(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        device = request.data.get('device')
+        device = request.GET.get('device')
+        print(device)
         push_notification.open_door(device)
         return Response('درخواست بازگشایی درب ثبت شد.')

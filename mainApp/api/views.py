@@ -130,8 +130,10 @@ class GetFaces(APIView):
                 'date': str(face.datetime).split(' ')[0],
                 'time': (str(face.datetime).split(' ')[1]).split('.')[0],
                 'need_open': face.need_to_check,
-                'open_link': link
+                'open_link': link,
             }
+            if not face.need_to_check:
+                output['name'] = face.known_face.first_name + ' ' + face.known_face.last_name
             face.need_to_check = False
             face.save()
             outputs.append(output)

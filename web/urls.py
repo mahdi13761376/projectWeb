@@ -9,7 +9,6 @@ from mainApp.api.views import ChangePassword
 from mainApp.api.views import ChangeDevice
 from mainApp.api.views import GetFaces
 from mainApp.api.views import GetKnownFaces
-from mainApp.api.views import Test
 from django.contrib import admin
 from django.conf import settings
 

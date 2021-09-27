@@ -1,5 +1,6 @@
 import os
 import shutil
+import datetime
 
 from django.contrib.auth.models import User
 from rest_framework.permissions import AllowAny
@@ -174,3 +175,25 @@ class AddFace(APIView):
 class Test(APIView):
     def get(self, request):
         return Response(push_notification.send_notification('hello'))
+
+
+class Ring(APIView):
+
+    def post(self, request):
+        img = request.data.get('img')
+        device_id = request.data.get('device_id')
+        device = Device.objects.get(serial=device_id)
+        user = device.user
+        print(img)
+        imgstr = img
+        data = ContentFile(base64.b64decode(imgstr), name='temp.png')
+        my_dir = 'rings/' + user.username + '/'
+        if not os.path.isdir(my_dir):
+            os.makedirs(my_dir)
+        img_loc = my_dir + str(datetime.datetime.now().date()) + str(datetime.datetime.now().time()) + '.png'
+        img_link = 'http://127.0.0.1:8000/media/' + img_loc
+        with open(img_loc, 'wb') as f:
+            shutil.copyfileobj(data.file, f, length=131072)
+        face = Face( user=user, pic_address=img_loc, pic_link=img_link)
+        face.save()
+        return Response('عملیات با موفقیت انجام شد.')

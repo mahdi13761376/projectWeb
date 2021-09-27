@@ -2,7 +2,7 @@ from django.conf.urls.static import static
 from django.urls import path
 from rest_framework_simplejwt import views as jwt_views
 
-from mainApp.api.views import RegisterView, AddFace
+from mainApp.api.views import RegisterView, AddFace, Ring
 from mainApp.api.views import Initialize
 from mainApp.api.views import AddDevice
 from mainApp.api.views import ChangePassword
@@ -27,5 +27,6 @@ urlpatterns = [
     path('get_known_faces/', GetKnownFaces.as_view(), name='get_known_faces'),
     path('add_face/', AddFace.as_view(), name='add_face'),
     path('test/', Test.as_view(), name='test'),
+    path('ring/', Ring.as_view(), name='ring'),
 
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

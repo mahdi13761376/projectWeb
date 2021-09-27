@@ -16,6 +16,7 @@ from mainApp.models import Device
 from mainApp.models import Face
 from mainApp.models import KnownFace
 from web.pusher import push_notification
+from web.face import FaceRecognition
 
 import base64
 
@@ -117,15 +118,22 @@ class GetFaces(APIView):
         user = request.user
         try:
             faces = Face.objects.filter(user=user)
+            device = Device.objects.get(user=user)
         except:
             faces = None
+            device = None
         outputs = []
+        link = 'http://127.0.0.1:8000/open?device=' + device.serial
         for face in faces:
             output = {
                 'link': face.pic_link,
                 'date': str(face.datetime).split(' ')[0],
-                'time': (str(face.datetime).split(' ')[1]).split('.')[0]
+                'time': (str(face.datetime).split(' ')[1]).split('.')[0],
+                'need_open': face.need_to_check,
+                'open_link': link
             }
+            face.need_to_check = False
+            face.save()
             outputs.append(output)
         return Response(outputs)
 
@@ -172,11 +180,6 @@ class AddFace(APIView):
         return Response('عملیات با موفقیت انجام شد.')
 
 
-class Test(APIView):
-    def get(self, request):
-        return Response(push_notification.send_notification('hello'))
-
-
 class Ring(APIView):
 
     def post(self, request):
@@ -194,6 +197,26 @@ class Ring(APIView):
         img_link = 'http://127.0.0.1:8000/media/' + img_loc
         with open(img_loc, 'wb') as f:
             shutil.copyfileobj(data.file, f, length=131072)
-        face = Face( user=user, pic_address=img_loc, pic_link=img_link)
+        face = Face(user=user, pic_address=img_loc, pic_link=img_link)
         face.save()
-        return Response('عملیات با موفقیت انجام شد.')
+        if device.mode:
+            known_face = FaceRecognition.my_face_recognition(user, img_loc)
+            if known_face is not None:
+                face.need_to_check = False
+                face.known_face = known_face
+                face.save()
+                res = {'open': True}
+                return Response(res)
+            push_notification.send_notification('کسی جلوی درب هست برای باز کردن درب به صغحه مراجعات برید.')
+            return Response({'open': False})
+        push_notification.send_notification('کسی جلوی درب هست برای باز کردن درب به صغحه مراجعات برید.')
+        return Response({'open': False})
+
+
+class Open(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        device = request.data.get('device')
+        push_notification.open_door(device)
+        return Response('درخواست بازگشایی درب ثبت شد.')

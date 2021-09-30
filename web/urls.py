@@ -9,6 +9,7 @@ from mainApp.api.views import ChangePassword
 from mainApp.api.views import ChangeDevice
 from mainApp.api.views import GetFaces
 from mainApp.api.views import GetKnownFaces
+from mainApp.api.views import CheckTheDoor
 from django.contrib import admin
 from django.conf import settings
 
@@ -27,5 +28,6 @@ urlpatterns = [
     path('add_face/', AddFace.as_view(), name='add_face'),
     path('open/', Open.as_view(), name='open'),
     path('ring/', Ring.as_view(), name='ring'),
+    path('check/', CheckTheDoor.as_view(), name='check'),
 
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

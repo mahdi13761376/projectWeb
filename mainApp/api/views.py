@@ -117,7 +117,7 @@ class GetFaces(APIView):
     def get(self, request):
         user = request.user
         try:
-            faces = Face.objects.filter(user=user).order_by()
+            faces = Face.objects.filter(user=user).order_by('-datetime')
             device = Device.objects.get(user=user)
         except:
             faces = None
@@ -134,8 +134,6 @@ class GetFaces(APIView):
             }
             if face.known_face is not None:
                 output['name'] = face.known_face.first_name + ' ' + face.known_face.last_name
-            face.need_to_check = False
-            face.save()
             outputs.append(output)
         return Response(outputs)
 
@@ -146,7 +144,7 @@ class GetKnownFaces(APIView):
     def get(self, request):
         user = request.user
         try:
-            faces = KnownFace.objects.filter(user=user)
+            faces = KnownFace.objects.filter(user=user).order_by('-datetime')
         except:
             faces = None
         outputs = []
@@ -188,8 +186,9 @@ class Ring(APIView):
         img = request.data.get('img')
         device_id = request.data.get('device_id')
         device = Device.objects.get(serial=device_id)
+        device.open = False
+        device.save()
         user = device.user
-        print(img)
         imgstr = img
         data = ContentFile(base64.b64decode(imgstr), name='temp.png')
         my_dir = 'rings/' + user.username + '/'
@@ -205,14 +204,16 @@ class Ring(APIView):
             known_face = FaceRecognition.my_face_recognition(user, img_loc)
             if known_face is not None:
                 face.need_to_check = False
-                face.known_face = known_face
+                face.known_face = known_face[0]
                 face.save()
-                res = {'open': True}
+                res = 'open'
+                name = known_face[0].first_name + ' ' + known_face[0].last_name
+                push_notification.send_notification('درب باز شد با دقت' + str(known_face[1]) + 'باز شد برای ' + name)
                 return Response(res)
-            push_notification.send_notification('کسی جلوی درب هست برای باز کردن درب به صغحه مراجعات برید.')
-            return Response({'open': False})
-        push_notification.send_notification('کسی جلوی درب هست برای باز کردن درب به صغحه مراجعات برید.')
-        return Response({'open': False})
+            push_notification.send_notification('کسی جلوی درب هست برای باز کردن درب به صغحه تردد برید.')
+            return Response('close')
+        push_notification.send_notification('کسی جلوی درب هست برای باز کردن درب به صغحه تردد برید.')
+        return Response('close')
 
 
 class Open(APIView):
@@ -220,6 +221,17 @@ class Open(APIView):
 
     def get(self, request):
         device = request.GET.get('device')
-        print(device)
-        push_notification.open_door(device)
+        device = Device.objects.get(serial=device)
+        device.open = True
+        device.save()
         return Response('درخواست بازگشایی درب ثبت شد.')
+
+
+class CheckTheDoor(APIView):
+    def post(self, request):
+        device_id = request.data.get('device_id')
+        device = Device.objects.get(serial=device_id)
+        open = device.open
+        device.open = False
+        device.save()
+        return Response(open)

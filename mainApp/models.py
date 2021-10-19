@@ -12,6 +12,7 @@ class Device(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
 
 
+
 class KnownFace(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False)
     pic_address = models.CharField(max_length=1024, blank=False, default=' ')
@@ -27,5 +28,5 @@ class Face(models.Model):
     pic_link = models.CharField(max_length=1024, blank=False, default=' ')
     datetime = jmodels.jDateTimeField(default=timezone.now())
     known_face = models.ForeignKey(KnownFace, on_delete=models.CASCADE, blank=True, null=True)
-    need_to_check = models.BooleanField(blank=False, default=True)
+    need_to_check = models.BooleanField(blank=False, default=False)
     acc = models.FloatField(blank=False, null=True)

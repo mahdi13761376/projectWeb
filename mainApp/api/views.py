@@ -201,6 +201,7 @@ class Ring(APIView):
         face = Face(user=user, pic_address=img_loc, pic_link=img_link)
         face.save()
         if device.mode:
+
             known_face = FaceRecognition.my_face_recognition(user, img_loc)
             if known_face is not None:
                 face.need_to_check = False
@@ -208,7 +209,8 @@ class Ring(APIView):
                 face.save()
                 res = 'open'
                 name = known_face[0].first_name + ' ' + known_face[0].last_name
-                push_notification.send_notification('درب باز شد با دقت' + str(known_face[1]) + 'باز شد برای ' + name)
+                push_notification.send_notification(
+                    'درب باز شد با دقت' + str(format(known_face[1], '.2f')) + 'باز شد برای ' + name)
                 return Response(res)
             push_notification.send_notification('کسی جلوی درب هست برای باز کردن درب به صغحه تردد برید.')
             return Response('close')
